@@ -4,18 +4,28 @@ on:
     branches: [ main ]
   # to run this workflow manually from the Actions tab
   workflow_dispatch:
+
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Add remote
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      run: git remote add space https://rodrigocesar:$HF_TOKEN@huggingface.co/spaces/rodrigocesar/demo2
-    - name: Push to hub
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      run: git push --force https://rodrigocesar:$HF_TOKEN@huggingface.co/spaces/rodrigocesar/demo2 main
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      # Add the Hugging Face remote
+      - name: Add remote
+        run: git remote add space https://huggingface.co/spaces/rodrigocesar/demo2
+      
+      # Configure git user and set the access token
+      - name: Configure Git
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          echo "${{ secrets.HF_TOKEN }}" > token
+          git remote set-url space "https://rodrigocesar:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/rodrigocesar/demo2"
+      
+      # Push changes to Hugging Face
+      - name: Push to hub
+        run: |
+          git push --force space main
