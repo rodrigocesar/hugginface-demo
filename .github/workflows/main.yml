@@ -21,11 +21,13 @@ jobs:
         git config --global user.name "GitHub Actions"
     
     - name: Add Hugging Face remote
+      env:
+        HF_TOKEN: ${{ secrets.HG }}
       run: git remote add space https://huggingface.co/spaces/rodrigocesar/demo2
     
     - name: Push to Hugging Face
       env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        HF_TOKEN: ${{ secrets.HG }}
       run: |
-        git remote set-url space https://rodrigocesar:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/rodrigocesar/demo2
+        git remote set-url space https://rodrigocesar:${{ secrets.HG }}@huggingface.co/spaces/rodrigocesar/demo2
         git push --force space main
